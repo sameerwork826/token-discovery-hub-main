@@ -9,6 +9,8 @@ import { Token } from '@/types/token';
 import { TokenPrice } from './TokenPrice';
 import { TokenChange } from './TokenChange';
 import { Separator } from '@/components/ui/separator';
+import { ChartContainer } from '@/components/ui/chart';
+import * as Recharts from 'recharts';
 
 interface TokenDetailsModalProps {
   token: Token | null;
@@ -46,7 +48,25 @@ export const TokenDetailsModal = ({ token, open, onOpenChange }: TokenDetailsMod
         </DialogHeader>
         
         <Separator className="my-4" />
-        
+
+        {token.priceHistory && token.priceHistory.length > 0 && (
+          <div className="mb-4 h-48">
+            <ChartContainer
+              id={`chart-${token.id}`}
+              config={{ price: { color: '#34d399' } }}
+            >
+              <Recharts.LineChart
+                data={token.priceHistory.map((p, i) => ({ i, price: p }))}
+              >
+                <Recharts.Line type="monotone" dataKey="price" stroke="#34d399" dot={false} strokeWidth={2} />
+                <Recharts.XAxis dataKey="i" hide />
+                <Recharts.YAxis hide domain={["dataMin", "dataMax"]} />
+                <Recharts.Tooltip />
+              </Recharts.LineChart>
+            </ChartContainer>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
